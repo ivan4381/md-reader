@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="id" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>MD Reader</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="bar">
+  <button id="back" class="ib" hidden aria-label="Kembali">←</button>
+  <div id="title">MD Reader</div>
+  <button id="tocBtn" class="ib" hidden aria-label="Daftar isi">☰</button>
+  <button id="menuBtn" class="ib" aria-label="Menu">⋯</button>
+</header>
+<main id="view"></main>
+<div id="sheetWrap" hidden><div id="backdrop"></div><div id="sheet"></div></div>
+<div id="toast" hidden></div>
+<script src="vendor/marked.min.js"></script>
+<script src="vendor/purify.min.js"></script>
+<script src="vendor/highlight.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
