@@ -1,7 +1,7 @@
-const V = 'mdr-shell-v2';
+const V = 'mdr-shell-v3';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
-  'vendor/marked.min.js', 'vendor/purify.min.js', 'vendor/highlight.min.js',
-  'icons/icon-192.png', 'icons/icon-512.png'];
+  'marked.min.js', 'purify.min.js', 'highlight.min.js',
+  'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
