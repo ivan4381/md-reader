@@ -181,10 +181,29 @@ function viewHome() {
 
 async function loadMine(id) {
   const box = $('#mine'); if (!box) return;
+  box.innerHTML = '<div class="sectionh">Repo kamu</div><p class="mut">Memuat daftar repo…</p>';
   try {
-    const { d } = await ghc('myrepos', '/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member');
+    // ambil SEMUA halaman (100 repo per halaman, maks 20 halaman)
+    let d = [], off = false;
+    try {
+      for (let pg = 1; pg <= 20; pg++) {
+        const part = await gh(`/user/repos?per_page=100&page=${pg}&sort=pushed&affiliation=owner,collaborator,organization_member`);
+        d = d.concat(part);
+        if (part.length < 100) break;
+      }
+      cachePut('myrepos', JSON.stringify(d));
+    } catch (e) {
+      if (e.status) throw e;
+      const c = await cacheGet('myrepos'); if (c == null) throw e;
+      d = JSON.parse(c); off = true;
+    }
     if (id !== rid || !$('#mine')) return;
-    box.innerHTML = `<div class="sectionh">Repo kamu</div><ul class="list">${d.map(x => `<li><a href="${link({ v: 'repo', o: x.owner.login, r: x.name, ref: x.default_branch })}"><span>${x.private ? '🔒' : '📁'}</span><span class="n">${esc(x.full_name)}${x.description ? `<div class="s">${esc(x.description)}</div>` : ''}</span></a></li>`).join('')}</ul>`;
+    const fine = store.get('token', '').startsWith('github_pat_');
+    box.innerHTML = `<div class="sectionh">Repo kamu (${d.length}) ${off ? '<span class="badge">offline</span>' : ''}</div>
+      ${d.length > 8 ? '<input type="search" id="rflt" placeholder="Cari repo…" style="margin-bottom:10px">' : ''}
+      <ul class="list" id="rls">${d.map(x => `<li data-n="${esc((x.full_name + ' ' + (x.description || '')).toLowerCase())}"><a href="${link({ v: 'repo', o: x.owner.login, r: x.name, ref: x.default_branch })}"><span>${x.private ? '🔒' : '📁'}</span><span class="n">${esc(x.full_name)}${x.description ? `<div class="s">${esc(x.description)}</div>` : ''}</span></a></li>`).join('')}</ul>
+      ${fine ? '<p class="mut">Token fine-grained hanya menampilkan repo yang diizinkan di pengaturan token. Repo tidak muncul? Edit token → Repository access → <b>All repositories</b>. Repo organisasi butuh token terpisah dengan Resource owner = organisasi tsb.</p>' : ''}`;
+    const rf = $('#rflt'); if (rf) rf.oninput = e => { const t = e.target.value.toLowerCase(); document.querySelectorAll('#rls li').forEach(li => li.hidden = !li.dataset.n.includes(t)); };
   } catch (e) { box.innerHTML = `<p class="mut">Gagal memuat daftar repo: ${esc(friendlyError(e))}</p>`; }
 }
 

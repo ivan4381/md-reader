@@ -1,4 +1,4 @@
-const V = 'mdr-shell-v3';
+const V = 'mdr-shell-v4';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
   'marked.min.js', 'purify.min.js', 'highlight.min.js',
   'icon-192.png', 'icon-512.png'];
